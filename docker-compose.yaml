@@ -1,0 +1,8 @@
+services:
+  app:
+    build: src
+    image: xomodo/ghwebhook
+    environment:
+      - API_SECRET=s3cRet
+    ports:
+      - '5000:5000'
