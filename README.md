@@ -1,5 +1,5 @@
 # github-flask-webhook
-Tiny flask app that listens for incoming requests from a [GitHub webhook](https://docs.github.com/en/developers/webhooks-and-events/about-webhooks)
+Simple flask app that listens for incoming requests from a [GitHub webhook](https://docs.github.com/en/developers/webhooks-and-events/about-webhooks)
 
 ## Example usage:
 
@@ -24,17 +24,24 @@ DOCKER_CONTAINER=xomodo/ghwebhook ./scripts/localhostrun.sh
 - <Add webhook>
 
 
-4: Clone repo from step 3, and push some changes to trigger webhook and receive data on your running :
+4: Clone repo from step 3, and push some changes to trigger webhook and receive data on your running container:
 ```
 git clone git@github.com:$GH_USER/$GH_REPO.git
 git co -b webhook-testing
 git commit -m "Trigger webhook" --allow-empty
 git push
-``
+```
 
 5. Observe logs
 ```
 docker logs localhostrun
-``
+```
 
-6: Optionally: extend handler 'src/ghwebhook.py' with additional steps, eg. to deploy app, etc.
+## Cleanup:
+
+1. Kill terminal used in step 2. <Ctrl+C>
+
+2. Stop container
+```
+docker-compose down
+```
