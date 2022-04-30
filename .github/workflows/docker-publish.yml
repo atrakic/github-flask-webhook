@@ -28,19 +28,6 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      # Extract metadata (tags, labels) for Docker
-      # https://github.com/docker/metadata-action
-      - name: Extract Docker metadata
-        id: meta
-        uses: docker/metadata-action@v3
-        with:
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          labels: |
-            org.opencontainers.image.title=GithubWebhook
-          tags: |
-            org.opencontainers.image.title=GithubWebhook
-
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
@@ -50,7 +37,12 @@ jobs:
           context: src/
           push: ${{ github.event_name != 'pull_request' }}
           labels: |
-            ${{ steps.meta.outputs.labels }}
+             org.opencontainers.image.title=GithubWebhook
+             org.opencontainers.image.description=Github webhook with flask
+             org.opencontainers.image.url=https://github.com/atrakic/github-flask-webhook
+             org.opencontainers.image.source=https://github.com/atrakic/github-flask-webhook
+             org.opencontainers.image.vendor=Cloud8
+             org.opencontainers.image.revision=${{ github.sha }}
+             org.opencontainers.image.licenses=MIT
           tags: |
-            ${{ steps.meta.outputs.tags }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
