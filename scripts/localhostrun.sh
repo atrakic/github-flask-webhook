@@ -1,45 +1,24 @@
 #!/usr/bin/env bash
+# Tunnel your running container to the outside world.
+#
+# Include in your builds via
+# \curl -sSL https://raw.githubusercontent.com/atrakic/github-flask-webhook/main/scripts/localhostrun.sh | bash -s
 
-# Tunnel your containers to outside ;)
-
-DOCKER_CONTAINER=${DOCKER_CONTAINER:?"You need to configure the DOCKER_CONTAINER environment variable, eg. 'containous/whoami' !"}
-DOCKER_PORT=${DOCKER_PORT:-5000}
-TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-''}  ## man timeout
-
-readonly name=localhostrun
-readonly remote_port=80
-readonly localhost_port=8080
+CONTAINER_NAME=${CONTAINER_NAME:?"Error, missing CONTAINER_NAME value of your running container"}
+CONTAINER_PORT=${CONTAINER_PORT:?"Error, missing CONTAINER_PORT value of your running container"}
+TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-''}  ## `man timeout`
 
 set -e
 
-del_stopped(){
-  local state
-  state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
-  if [[ "$state" == "true" ]]; then
-    cleanup
-  fi
-}
-
-docker_run(){
-  del_stopped || true
-
-  docker run -d \
-    -p "$localhost_port":"$DOCKER_PORT" \
-    -e "API_SECRET=s3cRet" \
-    --name "$name" \
-  "$DOCKER_CONTAINER"
-  #curl -f http://localhost:"$localhost_port" &>/dev/null
-}
-
 cleanup() {
-  docker stop "$name" || true
-  docker rm "$name" || true
+  docker stop "$CONTAINER_NAME" || true
+  docker rm "$CONTAINER_NAME" || true
   echo 'Done!'
 }
 
 main() {
-  local ssh_args=( -aT -R "${remote_port}":localhost:"$localhost_port" ssh.localhost.run -- )
-  docker_run
+  local remote_port=80  
+  local ssh_args=( -aT -R "${remote_port}":localhost:"$CONTAINER_PORT" ssh.localhost.run -- )
 
   if [ -z "$TIMEOUT_SECONDS" ]; then
     ssh "${ssh_args[@]}"
