@@ -4,7 +4,7 @@
 ## Example usage:
 # \curl -sSL https://raw.githubusercontent.com/atrakic/github-flask-webhook/main/scripts/localhostrun.sh | PORT=8080 bash -s
 
-PORT=${PORT:?"Error, missing CONTAINER_PORT value of your running container"}
+PORT=${PORT:?"Error, missing PORT value of your running container"}
 TIMEOUT_SECONDS=${TIMEOUT_SECONDS:-''}  ## `man timeout`
 
 set -e
